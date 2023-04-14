@@ -37,7 +37,7 @@ export default function App() {
       <button onClick={onClickFetchUser}>Get Data</button>
       <br />
       {error ? (
-        <p>Error in Get Data</p>
+        <p style={{ color: "red" }}>Error in Get Data</p>
       ) : loading ? (
         <p>Loading...</p>
       ) : (
