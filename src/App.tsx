@@ -1,10 +1,12 @@
 import "./styles.css";
+import { Practice1 } from "./practices/Practice1";
+import { Practice2 } from "./practices/Practice2";
 
 export default function App() {
   return (
     <div className="App">
-      <h1>Hello World</h1>
-      <h2>Good</h2>
+      <Practice1 />
+      <Practice2 />
     </div>
   );
 }
