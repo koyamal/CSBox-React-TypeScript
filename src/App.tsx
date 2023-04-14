@@ -1,40 +1,53 @@
 import "./styles.css";
+import { UserCard } from "./components/UserCard";
+import { UserProfile } from "./types/userProfile";
+import { User } from "./types/api/user";
 import axios from "axios";
 import { useState } from "react";
 
-import { Todo } from "./Todo";
-import { TodoType } from "./types/todo";
-import { Text } from "./Text";
-import { UserProfile } from "./UserProfile";
-import { User } from "./types/user";
-
-const user: User = {
-  name: "Tom",
-  hobbies: ["Movie", "Game"]
-};
-
 export default function App() {
-  const [todos, setTodos] = useState<Array<TodoType>>([]);
-  const onClickFetchData = () => {
+  const [userProfiles, setUserProfiles] = useState<Array<UserProfile>>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const onClickFetchUser = () => {
+    setLoading(true);
+    setError(false);
     axios
-      .get<Array<TodoType>>("https://jsonplaceholder.typicode.com/todos")
+      .get<Array<User>>("https://jsonplaceholder.typicode.com/users")
       .then((res) => {
-        setTodos(res.data);
+        const data = res.data.map((user) => {
+          return {
+            id: user.id,
+            name: `${user.name}(${user.username})`,
+            email: user.email,
+            address: `${user.address.city}${user.address.suite}${user.address.street}`
+          };
+        });
+        setUserProfiles(data);
+      })
+      .catch(() => {
+        setError(true);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   return (
     <div className="App">
-      <UserProfile user={user} />
-      <Text color="red" fontSize="28px" />
-      <button onClick={onClickFetchData}>Get Data</button>
-      {todos.map((todo) => (
-        <Todo
-          key={todo.id}
-          title={todo.title}
-          userId={todo.userId}
-          completed={todo.completed}
-        />
-      ))}
+      <button onClick={onClickFetchUser}>Get Data</button>
+      <br />
+      {error ? (
+        <p>Error in Get Data</p>
+      ) : loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {" "}
+          {userProfiles.map((user) => {
+            return <UserCard key={user.id} user={user} />;
+          })}
+        </>
+      )}
     </div>
   );
 }
